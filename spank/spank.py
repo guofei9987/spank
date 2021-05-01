@@ -18,7 +18,7 @@ from typing import (
     cast,
 )
 import pandas
-from spank.functions import value
+from spank.functions import Value
 import re
 
 regex = re.compile('(\w*)\s+(as|AS|As)\s+(\w*)')
@@ -70,8 +70,8 @@ def tidy_select_expr(args, columns):
                 add_key, add_value = tidy_select_col_str_expr(col_str=arg)
                 cols1.distinct_add(add_key=add_key, add_value=add_value)
 
-        if type(arg) is value:
-            # 类似 F.value(np.sin(sdf.col1)).alias('col3')
+        if type(arg) is Value:
+            # 类似 F.Value(np.sin(sdf.col1)).alias('col3')
             if arg.alias_:
                 cols1.distinct_add(add_key=arg.alias_, add_value=arg.v)
             else:
@@ -94,12 +94,8 @@ class DataFrame(pandas.DataFrame, ABC):
     ):
         super().__init__(data=data, index=index, columns=columns, dtype=dtype, copy=copy)
 
-    # def __init__(self):
-    #     super().__init__(self)
-
     def select_expr(self, *args):
         sdf_new = DataFrame()
-        # alias, cols = tidy_select_expr(args=args, columns=self.columns)
         cols = tidy_select_expr(args=args, columns=self.columns)
 
         for alias_, col_ in cols.items():
@@ -108,21 +104,9 @@ class DataFrame(pandas.DataFrame, ABC):
             else:
                 sdf_new.loc[:, alias_] = col_
 
-        # for i in range(len(alias)):
-        #     alias_, col_ = alias[i], cols[i]
-        #     if type(col_) is str:
-        #         sdf_new.loc[:, alias_] = self.loc[:, col_]
-        #     else:
-        #         sdf_new.loc[:, alias_] = col_
-
         return sdf_new
-
-    def select(self):
-        pass
 
     def filter_expr(self, filter_conditions):
         return self.loc[filter_conditions, :]
 
 
-class functions(object):
-    pass

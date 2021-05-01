@@ -1,27 +1,16 @@
-import pandas as pd
+## spank
 
-from datasets import data_generator
-import numpy as np
-import spank
-from spank import functions as F
+Easier implement based on pandas
 
-# %%
-
-sdf = data_generator(num_sample=5)
-
-sdf.head()
-
-# %%
+Select:
+```python
 sdf.select_expr('name as name1', '*', 'type as style_type',
                 sdf.feature1 + 1,
                 F.Value(np.sin(sdf.feature2)).alias("feature4"),
                 F.Value(1))
+```
 
-
-# %%
+Or filter
+```python
 sdf.filter_expr((sdf.sex == 'female') & (sdf.feature2 > 0.1))
-
-# %%
-
-sdf
-#%%
+```
